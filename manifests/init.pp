@@ -1,6 +1,6 @@
 class elasticsearch::params {
-  $version = "0.18.7"
-  $java_package = "openjdk-6-jre-headless"
+  $version = "0.20.4"
+  $java_package = "java-1.7.0-openjdk"
   $dbdir = "/var/lib/elasticsearch"
   $logdir = "/var/log/elasticsearch"
 }
@@ -14,11 +14,11 @@ class elasticsearch(
   $tarchive = "elasticsearch-${version}.tar.gz"
   $tmptarchive = "/tmp/${tarchive}"
   $tmpdir = "/tmp/elasticsearch-${version}"
-  $sharedirv = "/usr/share/elasticsearch-${version}"
-  $sharedir = "/usr/share/elasticsearch"
+  $sharedirv = "/opt/elasticsearch-${version}"
+  $sharedir = "/opt/elasticsearch"
   $etcdir = "/etc/elasticsearch"
-  $upstartfile = "/etc/init/elasticsearch.conf"
-  $defaultsfile = "/etc/default/elasticsearch"
+  $initscript = "/etc/init.d/elasticsearch"
+  $sysconfigfile = "/etc/sysconfig/elasticsearch"
   $configfile = "$etcdir/elasticsearch.yml"
   $logconfigfile = "$etcdir/logging.yml"
 
@@ -124,19 +124,19 @@ class elasticsearch(
     group  => root,
   }
 
-  file { $defaultsfile:
+  file { $sysconfigfile:
     ensure => present,
-    source => "puppet:///elasticsearch/etc-default-elasticsearch",
+    source => "puppet:///modules/elasticsearch/etc-default-elasticsearch",
   }
 
-  file { $upstartfile:
+  file { $initscript:
     ensure => present,
-    source => "puppet:///elasticsearch/etc-init-elasticsearch.conf",
+    source => "puppet:///modules/elasticsearch/etc-init.d-elasticsearch.conf",
   }
 
   service { 'elasticsearch':
     ensure   => running, 
     enable   => true,
-    provider => upstart,
+    provider => sysvinit,
   }
 }

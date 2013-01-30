@@ -1,17 +1,18 @@
 stage { pre: before => Stage[main] }
 
-class apt_get_update {
-  $sentinel = "/var/lib/apt/first-puppet-run"
+class yum_update {
+  $sentinel = "/var/run/first-puppet-run"
 
-  exec { "initial apt-get update":
-    command => "/usr/bin/apt-get update && touch ${sentinel}",
-    onlyif  => "/usr/bin/env test \\! -f ${sentinel} || /usr/bin/env test \\! -z \"$(find /etc/apt -type f -cnewer ${sentinel})\"",
+  exec { "initial yum update":
+    command => "/usr/bin/yum -y update && touch ${sentinel}",
+  # run the initial yum update only if there's files older than our sentinal in the yum repos dir
+    onlyif  => "/usr/bin/env test \\! -f ${sentinel} || /usr/bin/env test \\! -z \"$(find /var/lib/yum/repos -type f -cnewer ${sentinel})\"",
     timeout => 3600,
   }
 }
 
-# If we don't run apt-get update, installing openjdk will fail.
-class { 'apt_get_update':
+# I think this will work even without yum update
+class { 'yum_update':
   stage => pre,
 }
 
