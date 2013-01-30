@@ -98,7 +98,7 @@ class elasticsearch(
     command => "$sharedir/bin/service/elasticsearch install",
     cwd => $sharedir,
     creates => '/etc/init.d/elasticsearch',
-    require => File[$sharedir],
+    require => [File[$sharedir], File["$sharedirv/bin/service"]],
   }
 
   file { $sharedir:
