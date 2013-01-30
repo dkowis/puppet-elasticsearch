@@ -74,7 +74,7 @@ class elasticsearch(
 
   file { $tmptarchive:
     ensure  => present,
-    source  => "puppet:///elasticsearch/${tarchive}",
+    source  => "puppet:///modules/elasticsearch/${tarchive}",
     owner   => 'elasticsearch',
     mode    => '0644',
   }
@@ -92,6 +92,13 @@ class elasticsearch(
     path    => "/bin:/usr/bin",
     creates => $sharedirv,
     require => Exec[$tmpdir],
+  }
+
+  exec { $initfile:
+    command => "$sharedir/bin/service/elasticsearch install",
+    cwd => $sharedir,
+    creates => '/etc/init.d/elasticsearch',
+    require => File[$sharedir],
   }
 
   file { $sharedir:
@@ -136,17 +143,18 @@ class elasticsearch(
 
   file { $sysconfigfile:
     ensure => present,
-    source => "puppet:///modules/elasticsearch/etc-default-elasticsearch",
+    source => "puppet:///modules/elasticsearch/etc-sysconfig-elasticsearch",
   }
 
-  file { $initscript:
-    ensure => present,
-    source => "puppet:///modules/elasticsearch/etc-init.d-elasticsearch.conf",
-  }
+  #TODO: should get this from the command that installs the servicewrapper...
+  #file { $initscript:
+  #  ensure => present,
+  #  source => "puppet:///modules/elasticsearch/etc-init.d-elasticsearch.conf",
+  #}
 
   service { 'elasticsearch':
     ensure   => running, 
     enable   => true,
-    provider => sysvinit,
+    provider => redhat,
   }
 }
