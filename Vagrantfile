@@ -2,8 +2,9 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-  config.vm.box = "lucid32"
+  config.vm.box = "centos6_x86_64"
   config.vm.host_name = "elasticsearch"
+  config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.3-x86_64-v20130101.box"
   config.vm.network :hostonly, "192.168.31.46"
   config.vm.share_folder "modules/elasticsearch", "/tmp/vagrant-puppet/modules/elasticsearch", ".", :create => true
   config.vm.provision :puppet do |puppet|
