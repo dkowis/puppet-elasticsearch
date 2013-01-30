@@ -46,6 +46,16 @@ class elasticsearch(
     require => Group['elasticsearch'],
   }
 
+  file { "$sharedirv/bin/service":
+    ensure => directory,
+    owner => 'elasticsearch',
+    group => 'elasticsearch',
+    mode => '0755',
+    recurse => true,
+    require => User['elasticsearch'],
+    source => "puppet://modules/elasticsearch/service"
+  }
+
   file { $dbdir:
     ensure  => directory,
     owner   => 'elasticsearch',

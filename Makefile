@@ -14,3 +14,8 @@ fetch: files/$(es_tarchive)
 
 files/$(es_tarchive):
 	curl -o files/$(es_tarchive) $(es_source)/$(es_tarchive)
+
+servicewrapper: files/service
+
+files/service:
+	curl -L https://github.com/elasticsearch/elasticsearch-servicewrapper/tarball/master | tar -xz && mv *servicewrapper*/service files
